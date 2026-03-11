@@ -1,11 +1,77 @@
+# Balance Car Project - PlatformIO Test Directory
 
-This directory is intended for PlatformIO Test Runner and project tests.
+这是 `balance_car` 项目的测试目录说明文件。
 
-Unit Testing is a software testing method by which individual units of
-source code, sets of one or more MCU program modules together with associated
-control data, usage procedures, and operating procedures, are tested to
-determine whether they are fit for use. Unit testing finds problems early
-in the development cycle.
+## 项目概述
 
-More information about PlatformIO Unit Testing:
-- https://docs.platformio.org/en/latest/advanced/unit-testing/index.html
+本仓库是一个基于 ESP32 的自平衡小车（Balance Car）项目：
+
+- 传感器：MPU6050 六轴陀螺仪/加速度计
+- 处理器：ESP32
+- 编码器：双轮编码器（`ESP32Encoder`）
+- 电机驱动：双通道 PWM 控制（L298 或兼容驱动）
+- 通信：蓝牙（`BluetoothSerial`）和串口调试
+- 控制算法：卡尔曼/互补滤波角度融合 + PID 直立控制 + 速度环控制
+
+## 目录说明
+
+- `src/`：主程序源码，包含 PID 控制、传感器读取、蓝牙遥控、速度/姿态闭环。
+- `include/`：头文件/项目说明文件。
+- `lib/`：依赖库位置（通用 README 文件内说明）。
+- `test/`：PlatformIO 测试项目目录。
+
+## 功能说明
+
+- 角度估计：使用 MPU6050 的陀螺仪和加速度计值，采用互补滤波（`alpha` 参数）输出当前倾角
+- 姿态控制：第一环 PID 调整目标角度 (`targetAngle`) 使小车直立
+- 速度控制：第二环调整速度误差（`Kp_speed`、`Ki_speed`）平滑变速
+- 遥控命令：通过蓝牙接收字符串命令 `F/B/L/R/S/1-7` 进行前进/后退/转向/停止/速度档位切换
+- 调参命令：串口或蓝牙输入 `Pxxxx` `Dxxxx` `Sxxxx` `Ixxxx` `Axxxx` `Oxxxx` `Mxxxx` `Vxxxx` 动态在线调节参数
+
+## 测试说明
+
+该目录为 PlatformIO 单元测试保留：
+
+- 若要添加测试，请创建 `test/<your_test_name>/` 子目录
+- 使用 `platformio test -e <environment>` 运行测试
+- 单元测试模板：https://docs.platformio.org/en/latest/advanced/unit-testing/index.html
+
+## 初始化与运行
+
+1. 克隆仓库并进入目录：
+
+```bash
+git clone https://github.com/bigbearishappy/BBear_balance_car.git
+cd BBear_balance_car
+```
+
+2. 安装依赖（PlatformIO）
+
+```bash
+pip install platformio
+platformio run
+```
+
+3. 上传固件
+
+```bash
+platformio run --target upload
+```
+
+4. 监控串口
+
+```bash
+platformio device monitor --baud 115200
+```
+
+## 参数说明（核心变量）
+
+- `Kp`, `Kd`：姿态控制增益
+- `Kp_speed`, `Ki_speed`：速度环 PID 参数
+- `alpha`：加速度计与陀螺仪互补滤波系数（0~1）
+- `angleOffset`：零点角度偏置
+- `motor_deadzone`：死区补偿
+
+## 贡献说明
+
+欢迎 issue/PR，建议附带硬件测试、串口输出和行为描述。
