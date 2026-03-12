@@ -31,7 +31,7 @@ volatile float Kp_speed = 0.1;
 volatile float Ki_speed = 0.005;
 
 volatile float alpha = 0.98;
-volatile float angleOffset = 1.8;
+volatile float angleOffset = 1.5;
 
 volatile int motor_deadzone = 20;
 
