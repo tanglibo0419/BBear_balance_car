@@ -28,7 +28,7 @@ volatile float Kp = 350;
 volatile float Kd = 1.0;
 
 volatile float Kp_speed = 0.1;
-volatile float Ki_speed = 0.001;
+volatile float Ki_speed = 0.005;
 
 volatile float alpha = 0.98;
 volatile float angleOffset = 1.8;
